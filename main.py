@@ -21,7 +21,7 @@ def store_key(key):
         key_file.write(key.encode())  
 
 def check_key_validation(key):
-    result = subprocess.Popen(["cybersilo_validator", key], stdout=subprocess.PIPE).communicate()[0]
+    result = subprocess.Popen(["/usr/bin/java", "-jar", "usr/share/silo-license-validator/validator.jar", key], stdout=subprocess.PIPE).communicate()[0]
     return int(result)
 
 def get_ip_address():
