@@ -27,7 +27,14 @@
     <div class="container">
         <img class="logo" src="{{url_for('static', filename='siem.svg')}}" alt="">
         <span>Please enter the license key to acticate Dashboard</span>
-        <form method="post" class="flex flex-col max-w-sm w-full mt-8" >
+        {% if error %}
+        <div class="max-w-sm w-full mt-4">
+            <div class="h-12 w-full rounded-md border-2 border-black bg-red-500 bg-opacity-20 flex items-center px-4 text-red-800">
+                {{error}}
+            </div>
+        </div>
+        {% endif %}
+        <form method="post" class="flex flex-col max-w-sm w-full {{'mt-8' if not error }}">
             <span class="font-bold">License Key</span>
             <input class="my-2 border border-black rounded py-2 px-4" type="text" name="license_key" id="license_key" placeholder="Enter your license key">
             <input type="submit" class="cursor-pointer  bg-blue-600 rounded py-2 w-full text-white" value="Activate">

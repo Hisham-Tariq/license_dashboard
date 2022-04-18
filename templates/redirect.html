@@ -9,15 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <style>
-    .container {
-        width: 40%;
-        margin-inline: auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-    }
+    
 
     .logo {
         width: 250px;
@@ -25,15 +17,11 @@
 </style>
 
 <body>
-    <div class="container">
+    <div class="container max-w-sm w-full mx-auto flex flex-col items-center justify-center min-h-screen">
         <img class="logo" src="{{url_for('static', filename='siem.svg')}}" alt="">
-        <span>Please enter the license key to acticate Dashboard</span>
-        <form method="post" class="flex flex-col max-w-sm w-full mt-8">
-            <span class="font-bold">License Key</span>
-            <input class="my-2 border border-black rounded py-2 px-4" type="text" name="license_key" id="license_key"
-                placeholder="Enter your license key">
-            <input type="submit" class="cursor-pointer  bg-blue-600 rounded py-2 w-full text-white" value="Activate">
-        </form>
+        <span>Your license is activated</span>
+        <span class="mt-4">{{data['duration_left']}} days left for license to expire</span>
+        <a href="https://{{data['ip']}}:442" class="flex justify-center cursor-pointer bg-blue-600 rounded py-2 w-full text-white mt-2">Redirect to Dashboard</button>
     </div>
 </body>
 

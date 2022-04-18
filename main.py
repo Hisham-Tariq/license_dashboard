@@ -1,68 +1,82 @@
+from crypt import methods
+from distutils.log import error
 from ipaddress import ip_address
-from flask import Flask, redirect, render_template, url_for
+import subprocess
+from flask import Flask, redirect, render_template, request, url_for
 from os.path import exists
+import os
 import socket
 from cryptography.fernet import Fernet
 
 app = Flask(__name__)
 
 
-licenses = [
-    {
-        "hash": "kajhdankdsjgkjheqrfnmkiuenfmf",
-        "duration": "1d",
-    },
-    {
-        "hash": "sdkfjdskjowrjolwemngkjrwjmsdf",
-        "duration": "7d",
-    },
-    {
-        "hash": "dkjjuyerjjhvhjiukjwejhkouywewe",
-        "duration": "14d",
-    },
-    {
-        "hash": "ksdfazsxdcfvghbnjkmjhfdhnjkhgj",
-        "duration": "1M",
-    }
+def read_key():
+    if not exists('.license.silo'):
+        return None
+    else:
+        # read the file and get the key
+        key = ""
+        with open('.license.silo', 'rb') as key_file:
+            key = key_file.read()
+        return key
 
-];
+def store_key(key):
+    with open('.license.silo', 'wb') as key_file:
+        key_file.write(key.encode())  
 
+def check_key_validation(key):
+    result = subprocess.Popen(["java", "-jar", "validator.jar", key], stdout=subprocess.PIPE).communicate()[0]
+    return int(result)
 
-@app.route("/activate")
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0];
+
+@app.route("/activate", methods=['GET', 'POST'])
 def activate_dashboard():
+    if exists('.license.silo'):
+        return redirect(url_for('redirect_to_dashboard'))
+    if request.method == 'POST':
+        license_key = request.form['license_key']
+        try:
+            result = check_key_validation(license_key)
+            if result == -1:
+                return render_template("activate.html", error="License key has expired")
+            else:
+                store_key(license_key)
+                return redirect(url_for('redirect_to_dashboard'))
+        except ValueError:
+            return render_template("activate.html", error="Invalid license key")
     return render_template("activate.html")
 
 @app.route("/redirect")
-def redirect_to_dashboard():
-    return render_template("redirect.html")
-
-
-def intialize_licenses_file():
-    if not exists('.key.silo'):
-        # key generation
-        key = Fernet.generate_key()
-        # string the key in a file
-        with open('encryption.key', 'wb') as filekey:
-            filekey.write(key)
-        
-    with open('filekey.key', 'rb') as filekey:
-        key = filekey.read()
-        fernet = Fernet(key)
-        with open('.licnenses.silo', 'wb') as licenses:
-            licenses.write(fernet.encrypt(licenses))
+def redirect_to_dashboard():        
+    key = read_key()
+    if key is None:
+        return redirect(url_for('activate_dashboard'))
+    else:
+        try:
+            result = check_key_validation(key)
+            if result == -1:
+                return redirect(url_for('activate_dashboard'))
+            else:
+                
+                data = {"ip": get_ip_address(), "duration_left": result}
+                return render_template("redirect.html", data = data)
+        except ValueError:
+            return render_template("activate.html", error="Invalid license key")
 
 
 @app.route("/")
 def index():
-    intialize_licenses_file();
-    if exists('.license_keys.silo'):
+    if exists('.license.silo'):
         return redirect(url_for('redirect_to_dashboard'))
     else:
         return redirect(url_for('activate_dashboard'))
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    ip_address = s.getsockname()[0];
+    
     return redirect(url_for('activate_dashboard'))
 
 if __name__ == "__main__":
