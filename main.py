@@ -21,7 +21,7 @@ def store_key(key):
         key_file.write(key.encode())  
 
 def check_key_validation(key):
-    result = subprocess.Popen(["java", "-jar", "validator.jar", key], stdout=subprocess.PIPE).communicate()[0]
+    result = subprocess.Popen(["java", "-jar", "./validator.jar", key], stdout=subprocess.PIPE).communicate()[0]
     return int(result)
 
 def get_ip_address():
