@@ -30,16 +30,16 @@ def get_ip_address():
     return s.getsockname()[0];
 
 def stop_all_services():
-    os.system("systemctl stop wazuh-manager")
+    # os.system("systemctl stop wazuh-manager")
     os.system("systemctl stop kibana")
-    os.system("systemctl stop filebeat")
-    os.system("systemctl stop elasticsearch")
+    # os.system("systemctl stop filebeat")
+    # os.system("systemctl stop elasticsearch")
 
 def start_all_services():
-    os.system("systemctl start wazuh-manager")
+    # os.system("systemctl start wazuh-manager")
     os.system("systemctl start kibana")
-    os.system("systemctl start filebeat")
-    os.system("systemctl start elasticsearch")
+    # os.system("systemctl start filebeat")
+    # os.system("systemctl start elasticsearch")
 
 @app.route("/activate", methods=['GET', 'POST'])
 def activate_dashboard():
