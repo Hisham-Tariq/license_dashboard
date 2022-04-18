@@ -1,12 +1,7 @@
-from crypt import methods
-from distutils.log import error
-from ipaddress import ip_address
 import subprocess
 from flask import Flask, redirect, render_template, request, url_for
 from os.path import exists
-import os
 import socket
-from cryptography.fernet import Fernet
 
 app = Flask(__name__)
 
