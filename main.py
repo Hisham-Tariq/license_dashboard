@@ -25,9 +25,11 @@ def check_key_validation(key):
     return int(result)
 
 def get_ip_address():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    return s.getsockname()[0];
+    result = subprocess.Popen(["/usr/bin/curl", "-4", "icanhazip.com"], stdout=subprocess.PIPE).communicate()[0]
+    #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #s.connect(("8.8.8.8", 80))
+    #return s.getsockname()[0];
+    return result
 
 def stop_all_services():
     # os.system("/bin/systemctl stop wazuh-manager")
