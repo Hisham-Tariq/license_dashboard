@@ -29,7 +29,7 @@ def get_ip_address():
     #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     #s.connect(("8.8.8.8", 80))
     #return s.getsockname()[0];
-    return result
+    return result.decode("utf-8")
 
 def stop_all_services():
     # os.system("/bin/systemctl stop wazuh-manager")
